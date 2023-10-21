@@ -18,11 +18,14 @@ email-validator = "^2.0.0.post2"
 pydantic-extra-types = "^2.1.0"
 phonenumbers = "^8.13.22"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-fastapi-jwt-auth = "^0.5.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-multipart = "^0.0.6"
 libgravatar = "^1.0.4"
 fastapi-mail = "^1.4.1"
+fastapi-limiter = "^0.1.5"
+cloudinary = "^1.36.0"
+pydantic-settings = "^2.0.3"
+fastapi-jwt-auth = "^0.5.0"
 
 
 [build-system]

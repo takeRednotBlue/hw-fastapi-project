@@ -1,45 +1,35 @@
-'''
-Мета цього домашнього завдання — створити REST API для зберігання та управління контактами. API повинен бути побудований
-з використанням інфраструктури FastAPI та використовувати SQLAlchemy для управління базою даних.
-
-Контакти повинні зберігатися в базі даних та містити наступну інформацію:
-
-    Ім'я
-    Прізвище
-    Електронна адреса
-    Номер телефону
-    День народження
-    Додаткові дані (необов'язково)
-
-API повинен мати можливість виконувати наступні дії:
-
-    Створити новий контакт
-    Отримати список всіх контактів
-    Отримати один контакт за ідентифікатором
-    Оновити існуючий контакт
-    Видалити контакт
-
-На додаток до базового функціоналу CRUD API також повинен мати наступні функції:
-
-    Контакти повинні бути доступні для пошуку за ім'ям, прізвищем або адресою електронної пошти (Query).
-    API повинен мати змогу отримати список контактів з днями народження на найближчі 7 днів.
-
-Загальні вимоги
-
-    Використання фреймворку FastAPI для створення API
-    Використання ORM SQLAlchemy для роботи з базою даних
-    В якості бази даних варто використовувати PostgreSQL.
-    Підтримка CRUD операцій для контактів
-    Підтримка зберігання дати народження контакту
-    Надання документів для API
-    Використання модуля перевірки достовірності даних Pydantic
-'''
-
+import redis.asyncio as redis
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_limiter import FastAPILimiter
 
 from src.api.router import router
-
+from src.conf.config import settings
 
 app = FastAPI()
 
 app.include_router(router, prefix='/api')
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+async def startup():
+    r = redis.Redis(
+        host=settings.redis_host,
+        port=settings.redis_port,
+        db=0,
+        encoding="utf-8",
+        decode_responses=True
+    )
+    await FastAPILimiter.init(r)

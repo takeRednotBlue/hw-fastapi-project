@@ -1,3 +1,4 @@
+import pickle
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -5,6 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from redis import Redis
 from sqlalchemy.orm import Session
 
 from src.conf.config import settings
@@ -17,6 +19,7 @@ class Auth:
     SECRET_KEY = settings.secret_key
     ALGORITHM = settings.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+    r = Redis(host=settings.redis_host, port=settings.redis_port, db=0)
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -91,10 +94,15 @@ class Auth:
                 raise credentials_exception
         except JWTError:
             raise credentials_exception
-
-        user = await repository_users.get_user_by_email(email, db)
+        user = self.r.get(f'email:{email}')
         if user is None:
-            raise credentials_exception
+            user = await repository_users.get_user_by_email(email, db)
+            self.r.set(f'email:{email}', pickle.dumps(user))
+            self.r.expire(f'email:{email}', 60 * 15)
+            if user is None:
+                raise credentials_exception
+        else:
+            user = pickle.loads(user)
         return user
 
     def create_email_token(self, data: dict):
