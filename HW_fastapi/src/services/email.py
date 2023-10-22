@@ -23,7 +23,7 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(background_tasks: BackgroundTasks, email: EmailStr, username: str, host: str):
+async def send_email(email: EmailStr, username: str, host: str):
     try:
         token_verification = auth_service.create_email_token({"sub": email})
         message = MessageSchema(
