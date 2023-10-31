@@ -1,9 +1,6 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.orm import Session
-
 from src.database.db import get_db
 from src.database.models import User
 from src.repository import contacts as repo_contacts
@@ -19,7 +16,7 @@ RequestLimiter = Depends(RateLimiter(times=10, seconds=60))
 async def list_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
                         first_name: str = None, last_name: str = None, email: str = None,
                         current_user: User = Depends(
-                            auth_service.get_current_user)
+                        auth_service.get_current_user)
                         ) -> list[ResponseContact] | ResponseContact:
     """
     The list_contacts function returns a list of contacts.
@@ -50,7 +47,8 @@ async def list_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(g
     return contacts
 
 
-@router.post('/', response_model=ResponseContact, dependencies=[RequestLimiter])
+@router.post('/', response_model=ResponseContact, status_code=status.HTTP_201_CREATED,
+             dependencies=[RequestLimiter])
 async def create_contact(body: ContactModel, db: Session = Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     contact = await repo_contacts.create_contact(body, current_user, db)

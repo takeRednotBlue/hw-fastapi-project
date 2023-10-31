@@ -5,9 +5,11 @@ import pytest
 from src.database.models import User
 
 contact = {
-    "first_name": "John",
-    "last_name": "Wick",
-    "email": "lovemydog@example.com",
+    "first_name": "Maksym",
+    "last_name": "Klym",
+    "phone": "+380936644885",
+    "email": "test@example.com",
+    "birthday": "1990-10-01"
 }
 
 
@@ -35,18 +37,19 @@ def token(client, user, session, monkeypatch):
 def test_list_contacts_empty(client, token):
     response = client.get(
         "api/v1/contacts/",
-        header={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 404
     data = response.json()
+    print(data)
     assert data["detail"] == "There is no contacts"
 
 
-def create_contact(client, token, contact_fix):
+def test_create_contact(client, token):
     response = client.post(
         "api/v1/contacts/",
         json=contact,
-        header={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 201, response.text
     data = response.json()
@@ -56,29 +59,29 @@ def create_contact(client, token, contact_fix):
 def test_list_contacts(client, token):
     response = client.get(
         "api/v1/contacts/",
-        header={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200, response.text
     data = response.json()
     assert type(data) is list
-    assert data[0]["firs_name"] == contact["firs_name"]
+    assert data[0]["first_name"] == contact["first_name"]
     assert data[0]["last_name"] == contact["last_name"]
     assert data[0]["email"] == contact["email"]
 
 
 @pytest.mark.parametrize("param, value", [
-    ("firs_name", contact["first_name"]),
+    ("first_name", contact["first_name"]),
     ("last_name", contact["last_name"]),
     ("email", contact["email"]),
 ])
-def test_list_contacts_with_param(client, token, param, value, expected):
+def test_list_contacts_with_param(client, token, param, value):
     response = client.get(
         f"api/v1/contacts/?{param}={value}",
-        header={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data[param] == expected
+    assert data[param] == value
 
 
 @pytest.mark.parametrize("param, value", [
@@ -90,7 +93,7 @@ def test_list_contacts_wrong_param(client, token,
                                    param, value):
     response = client.get(
         f"api/v1/contacts/?{param}={value}",
-        header={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 404
     data = response.json()
