@@ -21,6 +21,19 @@ async def list_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(g
                         current_user: User = Depends(
                             auth_service.get_current_user)
                         ) -> list[ResponseContact] | ResponseContact:
+    """
+    The list_contacts function returns a list of contacts.
+
+    :param skip: int: Skip the first n contacts in the database
+    :param limit: int: Limit the number of contacts returned
+    :param db: Session: Pass the database session to the function
+    :param first_name: str: Filter the contacts by first name
+    :param last_name: str: Filter the contacts by last name
+    :param email: str: Get the contact by email
+    :param current_user: User: Get the user who is making the request
+    :return: A list of contacts
+    :doc-author: Trelent
+    """
     contacts = await repo_contacts.get_contacts(skip, limit, current_user, db)
 
     if first_name:
