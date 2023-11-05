@@ -32,9 +32,7 @@ def test_login_user_not_confirmed(client, user):
 
 def test_login_user(client, session, user):
     current_user: User = (
-        session.query(User)
-        .filter(User.email == user.get("email"))
-        .first()
+        session.query(User).filter(User.email == user.get("email")).first()
     )
     current_user.confirmed = True
     response = client.post(
@@ -61,6 +59,6 @@ def test_login_wrong_email(client, user):
         "api/v1/auth/login",
         data={"username": "wrong_email", "password": user.get("password")},
     )
-    assert response.status_code == 401, response.text2
+    assert response.status_code == 401, response.text
     data = response.json()
     assert data["detail"] == "Invalid email"

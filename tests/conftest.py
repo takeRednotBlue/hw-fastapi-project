@@ -1,10 +1,9 @@
-
 import pytest
 from fastapi.testclient import TestClient
-from main import app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from main import app
 from src.database.db import get_db
 from src.database.models import Base
 
@@ -14,13 +13,17 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 TestingSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=engine)
+    autocommit=False, autoflush=False, bind=engine
+)
 
 
-@pytest.fixture(scope="module")
-def session():
-    # Create the database
+def base_session():
+    """Base generator to be used in creating fixtures for pytest
+    and for setUp in unittest TesCase classes
 
+    :yield: Session object for db connection
+    :rtype: Generator[Session, Any, None]
+    """
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
@@ -29,6 +32,12 @@ def session():
         yield db
     finally:
         db.close()
+
+
+@pytest.fixture(scope="module")
+def session():
+    # Create the database for pytest tests
+    yield next(base_session())
 
 
 @pytest.fixture(scope="module")
@@ -51,7 +60,7 @@ def user():
     return {
         "username": "deadpool",
         "email": "deadpool@example.com",
-        "password": "123456789"
+        "password": "123456789",
     }
 
 
