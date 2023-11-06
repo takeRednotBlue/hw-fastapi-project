@@ -41,6 +41,6 @@ jobs:
       - name: Redis container
         run: docker run -d --name redis -p 6379:6379 redis
       - name: Postgres container
-        run: docker run --name "hw-fastapi-postgres" -p 5432:5432 -e POSTGRES_PASSWORD=789456 postgres
+        run: docker run -d --name "hw-fastapi-postgres" -p 5432:5432 -e POSTGRES_PASSWORD=789456 postgres
       - name: Test with pytest
         run: pytest
