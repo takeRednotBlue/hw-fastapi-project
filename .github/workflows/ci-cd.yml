@@ -19,7 +19,7 @@ jobs:
                 POSTGRES_PASSWORD=789456
                 POSTGRES_PORT=5432
                 DOMAIN=fastapi-hw-db
-                SQLALCHEMY_DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DOMAIN}:${POSTGRES_PORT}/${POSTGRES_DB}
+                SQLALCHEMY_DATABASE_URL=${{secrets.SQLALCHEMY_DATABASE_URL}}
                 SECRET_KEY=very_secret_key
                 ALGORITHM=HS256
                 MAIL_USERNAME=example@test.ua
@@ -40,7 +40,5 @@ jobs:
           pip install -r requirements.txt
       - name: Redis container
         run: docker run -d --name redis -p 6379:6379 redis
-      - name: Postgres container
-        run: docker run -d --name "hw-fastapi-postgres" -p 5432:5432 -e POSTGRES_PASSWORD=789456 postgres
       - name: Test with pytest
         run: pytest
