@@ -1,14 +1,15 @@
-FROM python:3.11
+FROM python:3.11-alpine
 
-WORKDIR /code
+WORKDIR /app
 
-COPY ./requirements.txt /code/requirements.txt
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
+
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY . /code
-
-EXPOSE 8000
-
-# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-# CMD []
