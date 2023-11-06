@@ -1,7 +1,7 @@
 name: Build, Test, and Deploy FastAPI-HW
 on:
   push:
-    branches: [feature/ows-auth]
+    branches: [feature/own-auth]
 
 jobs:
   build-test:
