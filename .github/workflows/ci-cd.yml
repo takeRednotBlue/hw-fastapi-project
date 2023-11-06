@@ -2,6 +2,8 @@ name: Build, Test, and Deploy FastAPI-HW
 on:
   push:
     branches: [feature/ows-auth]
+
+jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
