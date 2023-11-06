@@ -33,7 +33,7 @@ jobs:
                 CLOUDINARY_NAME=some name
                 CLOUDINARY_API_KEY=333333
                 CLOUDINARY_API_SECRET=some secret
-                CLOUDINARY_URL=url" >> .env
+                CLOUDINARY_URL=url" >> .env && echo ${SQLALCHEMY_DATABASE_URL}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
