@@ -1,19 +1,25 @@
 name: Build, Test, and Deploy FastAPI-HW
 on:
   push:
-    branches: [main]
+    branches: [feature/ows-auth]
   build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Injecting env vars
         run: |
-          echo "DATABASE_NAME=test_coredb
-          DATABASE_USER=test_core
-          DATABASE_PASSWORD=12345678
-          DATABASE_HOST=test_fastapi-hw_db
-          DATABASE_PORT=5432
-          POSTGRES_USER=test_core
-          POSTGRES_PASSWORD=12345678
-          POSTGRES_DB=test_coredb
-          " >> .env
+          echo "REDIS_HOST=localhost 
+                REDIS_PORT=6379" >> .env
+      - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Redis container
+        run: docker run -d --name redis -p 6379:6379 redis
+      - name: Test with pytest
+        run: pytest
+
