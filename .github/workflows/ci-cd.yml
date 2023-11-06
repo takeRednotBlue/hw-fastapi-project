@@ -42,4 +42,3 @@ jobs:
         run: docker run -d --name redis -p 6379:6379 redis
       - name: Test with pytest
         run: pytest
-
