@@ -14,8 +14,26 @@ jobs:
           python-version: "3.11"
       - name: Injecting env vars
         run: |
-          echo "REDIS_HOST=localhost 
-                REDIS_PORT=6379" >> .env
+          echo "POSTGRES_DB=postgres
+                POSTGRES_USER=postgres
+                POSTGRES_PASSWORD=789456
+                POSTGRES_PORT=5432
+                DOMAIN=fastapi-hw-db
+                SQLALCHEMY_DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DOMAIN}:${POSTGRES_PORT}/${POSTGRES_DB}
+                SECRET_KEY=very_secret_key
+                ALGORITHM=HS256
+                MAIL_USERNAME=example@test.ua
+                MAIL_PASSWORD=secret
+                MAIL_FROM=example@test.ua
+                MAIL_PORT=888
+                MAIL_SERVER=some server
+                MAIL_FROM_NAME=Example email
+                REDIS_HOST=localhost
+                REDIS_PORT=6379
+                CLOUDINARY_NAME=some name
+                CLOUDINARY_API_KEY=333333
+                CLOUDINARY_API_SECRET=some secret
+                CLOUDINARY_URL=url" >> .env
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
